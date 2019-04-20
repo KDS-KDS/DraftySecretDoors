@@ -3,4 +3,4 @@ Daggerfall Unity Mod - Regular secret doors emit a faint wind sound, making it e
 
 First release may not account for all doors. But it should. Please report any bugs!
 
-To Install: Drop the draftysecretdoors.dfmod into your daggerfall-unity\Assets\StreamingAssets\Mods folder. It's a breeze!
+To Install: Drop the draftysecretdoors.dfmod into your Daggerfall Unity\Daggerfall Unity_Data\StreamingAssets\Mods folder. It's a breeze!
