@@ -3,6 +3,7 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;   //required for modding features
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 namespace DraftySecretDoors
 {
@@ -12,10 +13,15 @@ namespace DraftySecretDoors
 
         private DaggerfallActionDoor[] actionDoors;
         private bool getDoors = false;
+        private float volume = 1.0f;
 
         private void Start()
         {
             SaveLoadManager.OnLoad += (saveData) => { getDoors = false; };
+
+            ModSettings settings = mod.GetSettings();
+
+            settings.GetValue<float>("Settings", "Volume");
         }
 
         void Update()
@@ -57,7 +63,7 @@ namespace DraftySecretDoors
                         secretDoorAudio.SetSound(70, AudioPresets.LoopIfPlayerNear);
                         secretDoorAudio.AudioSource.minDistance = 1.0f;
                         secretDoorAudio.AudioSource.maxDistance = 12.0f;
-                        secretDoorAudio.AudioSource.volume = 0.8f;  
+                        secretDoorAudio.AudioSource.volume = volume;
                     }
                 }
             }
