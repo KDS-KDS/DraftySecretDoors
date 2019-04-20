@@ -14,14 +14,18 @@ namespace DraftySecretDoors
         private DaggerfallActionDoor[] actionDoors;
         private bool getDoors = false;
         private float volume = 1.0f;
+		private float minDist = 1.0f;
+		private float maxDist = 12.0f;
 
         private void Start()
         {
-            SaveLoadManager.OnLoad += (saveData) => { getDoors = false; };
-
             ModSettings settings = mod.GetSettings();
 
-            settings.GetValue<float>("Settings", "Volume");
+            volume  = settings.GetValue<float>("Settings", "Volume");
+			minDist = settings.GetValue<float>("Settings", "MinVolumeDistance");
+			maxDist = settings.GetValue<float>("Settings", "MaxVolumeDistance");
+
+            SaveLoadManager.OnLoad += (saveData) => { getDoors = false; };
         }
 
         void Update()
@@ -61,8 +65,8 @@ namespace DraftySecretDoors
                         GameObject audioSource = Instantiate(mod.GetAsset<GameObject>("SecretDoorAudio.prefab"), actionDoors[i].transform);
                         DaggerfallAudioSource secretDoorAudio = audioSource.GetComponent<DaggerfallAudioSource>();
                         secretDoorAudio.SetSound(70, AudioPresets.LoopIfPlayerNear);
-                        secretDoorAudio.AudioSource.minDistance = 1.0f;
-                        secretDoorAudio.AudioSource.maxDistance = 12.0f;
+                        secretDoorAudio.AudioSource.minDistance = minDist;
+                        secretDoorAudio.AudioSource.maxDistance = maxDist;
                         secretDoorAudio.AudioSource.volume = volume;
                     }
                 }

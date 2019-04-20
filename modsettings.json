@@ -1,5 +1,5 @@
 {
-    "Version": null,
+    "Version": "1",
     "Sections": [
         {
             "Name": "Settings",
@@ -12,6 +12,24 @@
                     "Value": 1.0,
                     "Name": "Volume",
                     "Description": "Sets wind volume.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
+                },
+                {
+                    "Min": 0.0,
+                    "Max": 50.0,
+                    "Value": 1.0,
+                    "Name": "MinVolumeDistance",
+                    "Description": "The minimum distance the volume will cease to grow louder.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
+                },
+                {
+                    "Min": 0.0,
+                    "Max": 50.0,
+                    "Value": 12.0,
+                    "Name": "MaxVolumeDistance",
+                    "Description": "The distance the sound stops attenuating at.",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
                 }
