@@ -1,14 +1,10 @@
 using UnityEngine;
 using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.Utility.ModSupport;   //required for modding features
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
-using DaggerfallWorkshop.Game.Entity;
-using System.Collections.Generic;
-using System;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallConnect;
 
 namespace DraftySecretDoors
 {
@@ -17,10 +13,8 @@ namespace DraftySecretDoors
         public static Mod mod;
 
         private PlayerEnterExit playerEnterExit;
-        private DaggerfallActionDoor[] actionDoors;
 
         private string currentLocationName = null;
-
         private float volume = 1.0f;
 		private float minDist = 2.5f;
 		private float maxDist = 12.0f;
@@ -42,20 +36,16 @@ namespace DraftySecretDoors
         void Update()
         {
             if (!GameManager.Instance.IsPlayerInsideDungeon && currentLocationName != null)
-            {
-                actionDoors = null;
                 currentLocationName = null;
-            }
             else if (GameManager.Instance.IsPlayerInsideDungeon && playerEnterExit.Dungeon.Summary.LocationName != currentLocationName)
-            {
-                currentLocationName = playerEnterExit.Dungeon.Summary.LocationName;
-                GetDoors();
-            }
+                    Setup();
         }
 
-        private void GetDoors()
+        private void Setup()
         {
-            actionDoors = FindObjectsOfType<DaggerfallActionDoor>();
+            currentLocationName = playerEnterExit.Dungeon.Summary.LocationName;
+
+            DaggerfallActionDoor[] actionDoors = FindObjectsOfType<DaggerfallActionDoor>();
 
             if (actionDoors != null)
             {
@@ -72,19 +62,17 @@ namespace DraftySecretDoors
                     else
                     {
                         // Secret door
-
                         GameObject gameObject = new GameObject("SecretDoorAudio");
-                        gameObject.AddComponent<DaggerfallAudioSource>();
+                        gameObject.transform.position = actionDoors[i].transform.position;
                         gameObject.transform.SetParent(actionDoors[i].transform);
 
+                        gameObject.AddComponent<DaggerfallAudioSource>();
                         DaggerfallAudioSource daggerfallAudioSource = gameObject.GetComponent<DaggerfallAudioSource>();
                         daggerfallAudioSource.SetSound(72, AudioPresets.LoopIfPlayerNear);
                         daggerfallAudioSource.AudioSource.rolloffMode = AudioRolloffMode.Linear;
                         daggerfallAudioSource.AudioSource.minDistance = minDist;
                         daggerfallAudioSource.AudioSource.maxDistance = maxDist;
                         daggerfallAudioSource.AudioSource.volume = volume;
-
-                        gameObject.transform.position = actionDoors[i].transform.position;
                     }
                 }
             }
