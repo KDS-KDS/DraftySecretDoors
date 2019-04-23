@@ -4,6 +4,11 @@ using DaggerfallWorkshop.Game.Utility.ModSupport;   //required for modding featu
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
+using DaggerfallWorkshop.Game.Entity;
+using System.Collections.Generic;
+using System;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallConnect;
 
 namespace DraftySecretDoors
 {
@@ -11,8 +16,11 @@ namespace DraftySecretDoors
     {
         public static Mod mod;
 
+        private PlayerEnterExit playerEnterExit;
         private DaggerfallActionDoor[] actionDoors;
-        private bool getDoors = false;
+
+        private string currentLocationName = null;
+
         private float volume = 1.0f;
 		private float minDist = 2.5f;
 		private float maxDist = 12.0f;
@@ -22,23 +30,26 @@ namespace DraftySecretDoors
             ModSettings settings = mod.GetSettings();
 
             volume  = settings.GetValue<float>("Settings", "Volume");
-			minDist = settings.GetValue<float>("Settings", "MinVolumeDistance");
-			maxDist = settings.GetValue<float>("Settings", "MaxVolumeDistance");
+            minDist = settings.GetValue<float>("Settings", "MinVolumeDistance");
+            maxDist = settings.GetValue<float>("Settings", "MaxVolumeDistance");
 
-            SaveLoadManager.OnLoad += (saveData) => { getDoors = false; };
+            playerEnterExit = GameManager.Instance.PlayerEnterExit;
+
+            SaveLoadManager.OnLoad += (saveData) => { currentLocationName = null; };
+            StartGameBehaviour.OnNewGame += () => { currentLocationName = null; };
         }
 
         void Update()
         {
-            if (!GameManager.Instance.IsPlayerInsideDungeon && getDoors)
+            if (!GameManager.Instance.IsPlayerInsideDungeon && currentLocationName != null)
             {
                 actionDoors = null;
-                getDoors = false;
+                currentLocationName = null;
             }
-            else if (GameManager.Instance.IsPlayerInsideDungeon && !getDoors)
+            else if (GameManager.Instance.IsPlayerInsideDungeon && playerEnterExit.Dungeon.Summary.LocationName != currentLocationName)
             {
+                currentLocationName = playerEnterExit.Dungeon.Summary.LocationName;
                 GetDoors();
-                getDoors = true;
             }
         }
 
@@ -55,12 +66,12 @@ namespace DraftySecretDoors
                     if (meshFilterName.Contains("55000") || meshFilterName.Contains("55001") || meshFilterName.Contains("55002") || meshFilterName.Contains("55003") ||
                         meshFilterName.Contains("55004") || meshFilterName.Contains("55005"))
                     {
-                        //Debug.Log("Normal Door");
+                        // Normal door
                         continue;
                     }
                     else
                     {
-                        //Debug.Log("Secret Door");
+                        // Secret door
 
                         GameObject audioSource = Instantiate(mod.GetAsset<GameObject>("SecretDoorAudio.prefab"), actionDoors[i].transform);
                         DaggerfallAudioSource secretDoorAudio = audioSource.GetComponent<DaggerfallAudioSource>();
@@ -68,27 +79,19 @@ namespace DraftySecretDoors
                         secretDoorAudio.AudioSource.rolloffMode = AudioRolloffMode.Linear;
                         secretDoorAudio.AudioSource.minDistance = minDist;
                         secretDoorAudio.AudioSource.maxDistance = maxDist;
-                        secretDoorAudio.AudioSource.volume = volume;
+                        secretDoorAudio.AudioSource.volume = volume;                  
                     }
                 }
             }
         }
 
-        //this method will be called automatically by the modmanager after the main game scene is loaded.
-        //The following requirements must be met to be invoked automatically by the ModManager during setup for this to happen:
-        //1. Marked with the [Invoke] custom attribute
-        //2. Be public & static class method
-        //3. Take in an InitParams struct as the only parameter
         [Invoke(StateManager.StateTypes.Game, 0)]
         public static void Init(InitParams initParams)
         {
-            Debug.Log("main init");
-
             mod = initParams.Mod;
 
-            //just an example of how to add a mono-behavior to a scene.
             GameObject dsd = new GameObject("DraftySecretDoors");
-            DraftySecretDoors draftySecretDoors = dsd.AddComponent<DraftySecretDoors>();
+            dsd.AddComponent<DraftySecretDoors>();
 
             //after finishing, set the mod's IsReady flag to true.
             ModManager.Instance.GetMod(initParams.ModTitle).IsReady = true;
