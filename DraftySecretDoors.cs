@@ -73,13 +73,18 @@ namespace DraftySecretDoors
                     {
                         // Secret door
 
-                        GameObject audioSource = Instantiate(mod.GetAsset<GameObject>("SecretDoorAudio.prefab"), actionDoors[i].transform);
-                        DaggerfallAudioSource secretDoorAudio = audioSource.GetComponent<DaggerfallAudioSource>();
-                        secretDoorAudio.SetSound(72, AudioPresets.LoopIfPlayerNear);
-                        secretDoorAudio.AudioSource.rolloffMode = AudioRolloffMode.Linear;
-                        secretDoorAudio.AudioSource.minDistance = minDist;
-                        secretDoorAudio.AudioSource.maxDistance = maxDist;
-                        secretDoorAudio.AudioSource.volume = volume;                  
+                        GameObject gameObject = new GameObject("SecretDoorAudio");
+                        gameObject.AddComponent<DaggerfallAudioSource>();
+                        gameObject.transform.SetParent(actionDoors[i].transform);
+
+                        DaggerfallAudioSource daggerfallAudioSource = gameObject.GetComponent<DaggerfallAudioSource>();
+                        daggerfallAudioSource.SetSound(72, AudioPresets.LoopIfPlayerNear);
+                        daggerfallAudioSource.AudioSource.rolloffMode = AudioRolloffMode.Linear;
+                        daggerfallAudioSource.AudioSource.minDistance = minDist;
+                        daggerfallAudioSource.AudioSource.maxDistance = maxDist;
+                        daggerfallAudioSource.AudioSource.volume = volume;
+
+                        gameObject.transform.position = actionDoors[i].transform.position;
                     }
                 }
             }
