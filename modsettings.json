@@ -32,6 +32,15 @@
                     "Description": "The distance the sound stops attenuating at.",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
+                },
+                {
+                    "Min": 0.5,
+                    "Max": 4.0,
+                    "Value": 2.0,
+                    "Name": "Pitch",
+                    "Description": "Wind sound pitch adjustment.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
                 }
             ],
             "$version": "v1"
