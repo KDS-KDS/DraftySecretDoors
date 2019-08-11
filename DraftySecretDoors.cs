@@ -18,6 +18,7 @@ namespace DraftySecretDoors
         private float volume = 1.0f;
 		private float minDist = 2.5f;
 		private float maxDist = 12.0f;
+		private float pitch = 2.0f;
 
         private void Start()
         {
@@ -26,6 +27,7 @@ namespace DraftySecretDoors
             volume  = settings.GetValue<float>("Settings", "Volume");
             minDist = settings.GetValue<float>("Settings", "MinVolumeDistance");
             maxDist = settings.GetValue<float>("Settings", "MaxVolumeDistance");
+            pitch = settings.GetValue<float>("Settings", "Pitch");
 
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
 
@@ -49,9 +51,9 @@ namespace DraftySecretDoors
 
             if (actionDoors != null)
             {
-                for (int i = 0; i < actionDoors.Length; i++)
+                foreach (DaggerfallActionDoor actionDoor in actionDoors)
                 {
-                    string meshFilterName = actionDoors[i].GetComponent<MeshFilter>().name;
+                    string meshFilterName = actionDoor.GetComponent<MeshFilter>().name;
 
                     if (meshFilterName.Contains("55000") || meshFilterName.Contains("55001") || meshFilterName.Contains("55002") || meshFilterName.Contains("55003") ||
                         meshFilterName.Contains("55004") || meshFilterName.Contains("55005"))
@@ -63,16 +65,17 @@ namespace DraftySecretDoors
                     {
                         // Secret door
                         GameObject gameObject = new GameObject("SecretDoorAudio");
-                        gameObject.transform.position = actionDoors[i].transform.position;
-                        gameObject.transform.SetParent(actionDoors[i].transform);
+                        gameObject.transform.position = actionDoor.transform.position;
+                        gameObject.transform.SetParent(actionDoor.transform);
 
                         gameObject.AddComponent<DaggerfallAudioSource>();
                         DaggerfallAudioSource daggerfallAudioSource = gameObject.GetComponent<DaggerfallAudioSource>();
-                        daggerfallAudioSource.SetSound(72, AudioPresets.LoopIfPlayerNear);
+                        daggerfallAudioSource.SetSound(SoundClips.AmbientWindBlow1b, AudioPresets.LoopIfPlayerNear);
                         daggerfallAudioSource.AudioSource.rolloffMode = AudioRolloffMode.Linear;
                         daggerfallAudioSource.AudioSource.minDistance = minDist;
                         daggerfallAudioSource.AudioSource.maxDistance = maxDist;
                         daggerfallAudioSource.AudioSource.volume = volume;
+                        daggerfallAudioSource.AudioSource.pitch = pitch;
                     }
                 }
             }
